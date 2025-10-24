@@ -173,12 +173,12 @@ def process_text_files(
     split: str = "train"
 ) -> Tuple[int, int]:
     """
-    Process text files and create MLM dataset
+    Process text files and create MLM dataset compatible with PuzzleDataset
 
     Args:
         text_files: List of text file paths
         vocab: Vocabulary dictionary
-        output_dir: Output directory
+        output_dir: Output directory (base directory)
         max_seq_length: Maximum sequence length
         mask_prob: Masking probability
         split: Dataset split name
@@ -187,11 +187,9 @@ def process_text_files(
         num_examples: Number of examples created
         num_groups: Number of groups (1 for text data)
     """
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    inputs_file = output_dir / f"{split}_inputs.npy"
-    targets_file = output_dir / f"{split}_targets.npy"
+    # Create split-specific directory (e.g., data/sample-mlm/train/)
+    split_dir = Path(output_dir) / split
+    split_dir.mkdir(parents=True, exist_ok=True)
 
     all_inputs = []
     all_targets = []
@@ -219,18 +217,41 @@ def process_text_files(
                 all_inputs.append(inputs)
                 all_targets.append(targets)
 
-    # Save as numpy arrays
+    # Handle empty case
+    if len(all_inputs) == 0:
+        print(f"Warning: No examples created for {split} split")
+        return 0, 1
+
+    num_examples = len(all_inputs)
     inputs_array = np.stack(all_inputs, axis=0)
     targets_array = np.stack(all_targets, axis=0)
 
-    np.save(inputs_file, inputs_array)
-    np.save(targets_file, targets_array)
+    # Create puzzle metadata arrays (required by PuzzleDataset)
+    # For MLM, we treat each example as a separate "puzzle" in a single group
+    #
+    # puzzle_identifiers[i] = which "puzzle identifier" this puzzle belongs to (all 0 for MLM)
+    puzzle_identifiers = np.zeros(num_examples, dtype=np.int32)
 
-    print(f"Saved {len(all_inputs)} examples to {output_dir}")
+    # puzzle_indices[i] = starting index in the examples array for puzzle i
+    # Since each example is one puzzle, this is [0, 1, 2, ..., num_examples]
+    puzzle_indices = np.arange(num_examples + 1, dtype=np.int32)
+
+    # group_indices[i] = starting puzzle index for group i
+    # We have 1 group containing all puzzles, so this is [0, num_examples]
+    group_indices = np.array([0, num_examples], dtype=np.int32)
+
+    # Save in PuzzleDataset format: {split}__{field}.npy
+    np.save(split_dir / f"{split}__inputs.npy", inputs_array)
+    np.save(split_dir / f"{split}__labels.npy", targets_array)
+    np.save(split_dir / f"{split}__puzzle_identifiers.npy", puzzle_identifiers)
+    np.save(split_dir / f"{split}__puzzle_indices.npy", puzzle_indices)
+    np.save(split_dir / f"{split}__group_indices.npy", group_indices)
+
+    print(f"Saved {num_examples} examples to {split_dir}")
     print(f"  Inputs shape: {inputs_array.shape}")
-    print(f"  Targets shape: {targets_array.shape}")
+    print(f"  Labels shape: {targets_array.shape}")
 
-    return len(all_inputs), 1  # Single group for all text data
+    return num_examples, 1  # Single group for all text data
 
 
 def main():
@@ -261,9 +282,14 @@ def main():
     print(f"Saved vocabulary to {vocab_file}")
 
     # Split files into train/test
-    num_test = max(1, int(len(args.input_files) * args.test_split))
-    test_files = args.input_files[:num_test]
-    train_files = args.input_files[num_test:]
+    # For single file, use it for both train and test
+    if len(args.input_files) == 1:
+        train_files = args.input_files
+        test_files = args.input_files
+    else:
+        num_test = max(1, int(len(args.input_files) * args.test_split))
+        test_files = args.input_files[:num_test]
+        train_files = args.input_files[num_test:]
 
     # Process train set
     num_train, num_groups = process_text_files(
@@ -277,24 +303,27 @@ def main():
         args.max_seq_length, args.mask_prob, split="test"
     )
 
-    # Create metadata
-    metadata = PuzzleDatasetMetadata(
-        seq_len=args.max_seq_length,
-        vocab_size=len(vocab),
-        pad_id=PAD_ID,
-        ignore_label_id=IGNORE_LABEL_ID,
-        blank_identifier_id=0,
-        num_puzzle_identifiers=num_groups,
-        sets={
-            "train": {"num_examples": num_train, "num_groups": num_groups},
-            "test": {"num_examples": num_test, "num_groups": 1}
-        }
-    )
+    # Create and save metadata for each split
+    # PuzzleDataset expects dataset.json in each split directory
+    for split, num_examples in [("train", num_train), ("test", num_test)]:
+        metadata = PuzzleDatasetMetadata(
+            seq_len=args.max_seq_length,
+            vocab_size=len(vocab),
+            pad_id=PAD_ID,
+            ignore_label_id=IGNORE_LABEL_ID,
+            blank_identifier_id=0,
+            num_puzzle_identifiers=1,  # Single identifier for all MLM data
+            total_groups=1,  # All examples in one group
+            mean_puzzle_examples=float(num_examples),
+            total_puzzles=num_examples,
+            sets=[split]  # Only this split
+        )
 
-    metadata_file = output_dir / "metadata.json"
-    with open(metadata_file, 'w') as f:
-        json.dump(metadata.model_dump(), f, indent=2)
-    print(f"Saved metadata to {metadata_file}")
+        split_dir = output_dir / split
+        metadata_file = split_dir / "dataset.json"
+        with open(metadata_file, 'w') as f:
+            json.dump(metadata.model_dump(), f, indent=2)
+        print(f"Saved metadata to {metadata_file}")
 
     print("\nDataset creation complete!")
     print(f"  Train examples: {num_train}")

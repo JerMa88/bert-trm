@@ -17,7 +17,12 @@ import coolname
 import hydra
 import pydantic
 from omegaconf import DictConfig
-from adam_atan2 import AdamATan2
+try:
+    from adam_atan2 import AdamATan2
+    HAS_ADAM_ATAN2 = True
+except ImportError:
+    HAS_ADAM_ATAN2 = False
+    print("adam_atan2 not available (requires CUDA). Using standard Adam optimizer.")
 
 from puzzle_dataset import PuzzleDataset, PuzzleDatasetConfig, PuzzleDatasetMetadata
 from utils.functions import load_model_class, get_model_source_path
@@ -114,20 +119,25 @@ def create_dataloader(config: PretrainConfig, split: str, rank: int, world_size:
 
 
 def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, rank: int, world_size: int):
-    model_cfg = dict(
-        **config.arch.__pydantic_extra__,  # type: ignore
-        batch_size=config.global_batch_size // world_size,
-        vocab_size=train_metadata.vocab_size,
-        seq_len=train_metadata.seq_len,
-        num_puzzle_identifiers=train_metadata.num_puzzle_identifiers,
-        causal=False  # Non-autoregressive
-    )
+    # Start with arch config
+    model_cfg = dict(**config.arch.__pydantic_extra__)  # type: ignore
+
+    # Override with metadata values (avoiding duplicates)
+    model_cfg.update({
+        'batch_size': config.global_batch_size // world_size,
+        'vocab_size': train_metadata.vocab_size,
+        'seq_len': train_metadata.seq_len,
+        'num_puzzle_identifiers': train_metadata.num_puzzle_identifiers,
+        'causal': False  # Non-autoregressive
+    })
 
     # Instantiate model with loss head
     model_cls = load_model_class(config.arch.name)
     loss_head_cls = load_model_class(config.arch.loss.name)
 
-    with torch.device("cuda"):
+    # Use CUDA if available, otherwise CPU
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    with torch.device(device):
         model: nn.Module = model_cls(model_cfg)
         print(model)
         model = loss_head_cls(model, **config.arch.loss.__pydantic_extra__)  # type: ignore
@@ -146,8 +156,9 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
 
     # Optimizers and lr
     if config.arch.puzzle_emb_ndim == 0:
+        OptimizerClass = AdamATan2 if HAS_ADAM_ATAN2 else torch.optim.AdamW
         optimizers = [
-            AdamATan2(
+            OptimizerClass(
                 model.parameters(),
                 lr=0,  # Needs to be set by scheduler
                 weight_decay=config.weight_decay,
@@ -170,6 +181,7 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
             config.puzzle_emb_lr
         ]
     else:
+        OptimizerClass = AdamATan2 if HAS_ADAM_ATAN2 else torch.optim.AdamW
         optimizers = [
             CastedSparseEmbeddingSignSGD_Distributed(
                 model.model.puzzle_emb.buffers(),  # type: ignore
@@ -177,7 +189,7 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata, 
                 weight_decay=config.puzzle_emb_weight_decay,
                 world_size=world_size
             ),
-            AdamATan2(
+            OptimizerClass(
                 model.parameters(),
                 lr=0,  # Needs to be set by scheduler
                 weight_decay=config.weight_decay,
@@ -292,11 +304,12 @@ def train_batch(config: PretrainConfig, train_state: TrainState, batch: Any, glo
         return
 
     # To device
-    batch = {k: v.cuda() for k, v in batch.items()}
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    batch = {k: v.to(device) for k, v in batch.items()}
 
     # Init carry if it is None
     if train_state.carry is None:
-        with torch.device("cuda"):
+        with torch.device(device):
             train_state.carry = train_state.model.initial_carry(batch)  # type: ignore
 
     # Forward
@@ -375,10 +388,11 @@ def evaluate(
             processed_batches += 1
             if rank == 0:
                 print(f"Processing batch {processed_batches}: {set_name}")
-            
+
             # To device
-            batch = {k: v.cuda() for k, v in batch.items()}
-            with torch.device("cuda"):
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            batch = {k: v.to(device) for k, v in batch.items()}
+            with torch.device(device):
                 carry = train_state.model.initial_carry(batch)  # type: ignore
 
             # Forward
@@ -413,8 +427,9 @@ def evaluate(
                 metric_keys = list(
                     sorted(metrics.keys())
                 )  # Sort keys to guarantee all processes use the same order.
+                device = "cuda" if torch.cuda.is_available() else "cpu"
                 metric_values = torch.zeros(
-                    (len(set_ids), len(metrics.values())), dtype=torch.float32, device="cuda"
+                    (len(set_ids), len(metrics.values())), dtype=torch.float32, device=device
                 )
 
             metric_values[set_id] += torch.stack([metrics[k] for k in metric_keys])

@@ -1,0 +1,10 @@
+.claude/
+.mypycache__/
+__pycache__/
+*.pyc
+
+.venv/
+data/
+checkpoints/
+kaggle/
+outputs/

@@ -1,0 +1,36 @@
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+No evaluator found
+Error executing job with overrides: ['arch=bert', 'data_paths=[data/sample-mlm]', 'global_batch_size=4', 'epochs=1000', 'eval_interval=100', 'lr=1e-4', 'arch.num_layers=2', 'arch.hidden_size=128', 'arch.num_heads=4', '+run_name=bert_demo', '+project_name=bert-trm-demo']
+Traceback (most recent call last):
+  File "/Users/zma/Documents/GitHub/bert-trm/pretrain.py", line 593, in launch
+    train_state = init_train_state(config, train_metadata, rank=RANK, world_size=WORLD_SIZE)
+  File "/Users/zma/Documents/GitHub/bert-trm/pretrain.py", line 232, in init_train_state
+    model, optimizers, optimizer_lrs = create_model(config, train_metadata, rank=rank, world_size=world_size)
+                                       ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zma/Documents/GitHub/bert-trm/pretrain.py", line 139, in create_model
+    model: nn.Module = model_cls(model_cfg)
+                       ~~~~~~~~~^^^^^^^^^^^
+  File "/Users/zma/Documents/GitHub/bert-trm/models/recursive_reasoning/bert_mlm.py", line 123, in __init__
+    self.token_embeddings = CastedEmbedding(
+                            ~~~~~~~~~~~~~~~^
+        self.config.vocab_size,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        cast_to=self.forward_dtype
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/zma/Documents/GitHub/bert-trm/models/layers.py", line 74, in __init__
+    trunc_normal_init_(torch.empty((num_embeddings, embedding_dim)), std=init_std)
+                       ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/torch/utils/_device.py", line 103, in __torch_function__
+    return func(*args, **kwargs)
+  File "/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py", line 403, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+AssertionError: Torch not compiled with CUDA enabled
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

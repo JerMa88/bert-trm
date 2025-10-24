@@ -1,0 +1,57 @@
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+No evaluator found
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-1): 2 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+  0%|          | 0/187 [00:00<?, ?it/s]/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/torch/utils/data/dataloader.py:692: UserWarning: 'pin_memory' argument is set as true but not supported on MPS now, device pinned memory won't be used.
+  warnings.warn(warn_msg)
+[Rank 0, World Size 1]: Epoch 0
+TRAIN
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+  1%|          | 1/187 [00:08<25:17,  8.16s/it]  1%|          | 2/187 [00:08<10:42,  3.47s/it]/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/torch/utils/data/dataloader.py:692: UserWarning: 'pin_memory' argument is set as true but not supported on MPS now, device pinned memory won't be used.
+  warnings.warn(warn_msg)
+EVALUATE
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'repr' attribute with value False was provided to the `Field()` function, which has no effect in the context it was used. 'repr' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'frozen' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'frozen' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+Processing batch 1: test
+Error executing job with overrides: ['arch=bert', 'data_paths=[data/sample-mlm]', 'global_batch_size=4', 'epochs=50', 'eval_interval=10', 'lr=1e-4', 'arch.num_layers=2', 'arch.hidden_size=128', 'arch.num_heads=4', '+run_name=bert_demo', '+project_name=bert-trm-demo']
+Traceback (most recent call last):
+  File "/Users/zma/Documents/GitHub/bert-trm/pretrain.py", line 639, in launch
+    metrics = evaluate(config,
+        train_state_eval,
+    ...<4 lines>...
+        world_size=WORLD_SIZE,
+        cpu_group=CPU_PROCESS_GROUP)
+  File "/Users/zma/Documents/GitHub/bert-trm/pretrain.py", line 393, in evaluate
+    batch = {k: v.cuda() for k, v in batch.items()}
+                ~~~~~~^^
+  File "/Users/zma/Documents/GitHub/bert-trm/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py", line 403, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+AssertionError: Torch not compiled with CUDA enabled
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+  1%|          | 2/187 [00:09<14:50,  4.82s/it]
