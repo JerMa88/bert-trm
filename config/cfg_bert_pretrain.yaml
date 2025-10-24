@@ -1,0 +1,52 @@
+# BERT Pre-training Configuration
+# For Masked Language Modeling on text corpus
+
+defaults:
+  - arch: bert
+  - _self_
+
+hydra:
+  output_subdir: null
+
+# Data paths
+# Replace with your text dataset path after running dataset/build_text_mlm_dataset.py
+data_paths: ['data/wiki-mlm']
+data_paths_test: []
+
+# No evaluators for now (can add perplexity evaluation later)
+evaluators: []
+
+# Hyperparams - Training
+global_batch_size: 256  # BERT paper uses 256 sequences/batch
+
+epochs: 1000000  # Large number for continuous training
+eval_interval: 10000
+checkpoint_every_eval: True
+
+# Learning rate (BERT paper uses 1e-4 for BERT-Base)
+lr: 1e-4
+lr_min_ratio: 0.1  # For cosine decay
+lr_warmup_steps: 10000  # Warmup for first 10k steps
+
+# Optimizer settings (as in BERT paper)
+beta1: 0.9
+beta2: 0.999
+weight_decay: 0.01
+
+# Puzzle embeddings (not used for BERT)
+puzzle_emb_lr: 0.0
+puzzle_emb_weight_decay: 0.0
+
+seed: 42
+min_eval_interval: 0
+
+# EMA settings
+ema: false  # Can enable for stability
+ema_rate: 0.999
+freeze_weights: false
+
+# Notes:
+# - BERT paper trains for 1M steps with batch size 256
+# - Each sequence has max 512 tokens
+# - Total training tokens: 256 * 512 * 1M = ~131B tokens
+# - Original BERT used BooksCorpus (800M words) + English Wikipedia (2,500M words)

@@ -1,0 +1,48 @@
+# BERT Model Configuration
+# Based on BERT-Base architecture (110M parameters)
+
+name: recursive_reasoning.bert_mlm@BERTModel
+loss:
+  name: losses@BERTMLMLoss
+  loss_type: softmax_cross_entropy
+  use_nsp: false  # Set to true to enable Next Sentence Prediction
+
+# BERT Architecture (BERT-Base)
+num_layers: 12  # Transformer layers
+hidden_size: 768  # Hidden dimension
+num_heads: 12  # Attention heads
+expansion: 4  # FFN expansion (intermediate_size = 3072)
+
+# Embeddings
+max_position_embeddings: 512  # Maximum sequence length
+type_vocab_size: 2  # Segment embeddings (sentence A/B)
+
+# MLM Configuration
+mask_prob: 0.15  # Percentage of tokens to mask
+
+# Regularization
+hidden_dropout_prob: 0.1
+attention_probs_dropout_prob: 0.1
+rms_norm_eps: 1e-5
+
+# Data type
+forward_dtype: bfloat16
+
+# Compatibility with TRM (unused for BERT)
+H_cycles: 1  # No recursion for standard BERT
+L_cycles: 1
+H_layers: 0
+L_layers: ${.num_layers}
+puzzle_emb_ndim: 0  # No puzzle embeddings for BERT
+num_puzzle_identifiers: 0
+halt_exploration_prob: 0.0
+halt_max_steps: 1
+mlp_t: false
+puzzle_emb_len: 0
+no_ACT_continue: true
+
+# Note: For BERT-Large, use:
+# num_layers: 24
+# hidden_size: 1024
+# num_heads: 16
+# expansion: 4  # intermediate_size = 4096

@@ -101,3 +101,129 @@ class ACTLossHead(nn.Module):
 
         return new_carry, lm_loss + 0.5 * (q_halt_loss + q_continue_loss), metrics, detached_outputs, new_carry.halted.all()
 
+
+class BERTMLMLoss(nn.Module):
+    """
+    Loss function for BERT Masked Language Modeling
+
+    Computes cross-entropy loss only on masked tokens (ignoring non-masked positions).
+    Optionally includes Next Sentence Prediction (NSP) loss.
+    """
+
+    def __init__(self, model: nn.Module, loss_type: str = "softmax_cross_entropy", use_nsp: bool = False):
+        super().__init__()
+        self.model = model
+        self.loss_fn = globals()[loss_type]
+        self.use_nsp = use_nsp
+
+    def initial_carry(self, *args, **kwargs):
+        return self.model.initial_carry(*args, **kwargs)
+
+    @property
+    def puzzle_emb(self):
+        """For compatibility with TRM training loop"""
+        return self.model.puzzle_emb
+
+    def forward(
+        self,
+        return_keys: Sequence[str],
+        carry: Any = None,
+        batch: Dict[str, torch.Tensor] = None,
+        **kwargs
+    ) -> Tuple[Any, torch.Tensor, Dict[str, torch.Tensor], Optional[Dict[str, torch.Tensor]], bool]:
+        """
+        Forward pass with MLM loss computation
+
+        Args:
+            return_keys: Keys to return in detached_outputs
+            carry: Model carry (dummy for BERT)
+            batch: Dictionary containing:
+                - 'inputs': [batch_size, seq_len] input token ids
+                - 'targets' or 'labels': [batch_size, seq_len] target labels
+                  (IGNORE_LABEL_ID for non-masked positions)
+                - 'nsp_labels': [batch_size] NSP labels (optional)
+
+        Returns:
+            carry: Updated carry
+            loss: Combined MLM + NSP loss
+            metrics: Dictionary of metrics
+            detached_outputs: Requested output tensors
+            all_halted: Always True for BERT (no iterative refinement)
+        """
+        # Forward pass through BERT model
+        new_carry, outputs = self.model(carry, batch)
+
+        # Get labels (support both 'labels' and 'targets' keys)
+        labels = batch.get('labels', batch.get('targets'))
+        if labels is None:
+            raise ValueError("Batch must contain 'labels' or 'targets' key")
+
+        # Compute MLM loss (only on masked positions)
+        mlm_logits = outputs['logits']  # [batch_size, seq_len, vocab_size]
+
+        # Mask for valid positions (not IGNORE_LABEL_ID)
+        mask = (labels != IGNORE_LABEL_ID)
+        loss_counts = mask.sum(-1)  # Number of masked tokens per sequence
+        loss_divisor = loss_counts.clamp_min(1).unsqueeze(-1)  # Avoid division by zero
+
+        # Compute cross-entropy loss on masked tokens
+        mlm_loss_per_token = self.loss_fn(mlm_logits, labels, ignore_index=IGNORE_LABEL_ID)
+        mlm_loss = (mlm_loss_per_token / loss_divisor).sum()
+
+        total_loss = mlm_loss
+
+        # Optional: NSP loss
+        nsp_loss = torch.tensor(0.0, device=mlm_loss.device)
+        if self.use_nsp and 'nsp_logits' in outputs:
+            nsp_labels = batch.get('nsp_labels')
+            if nsp_labels is not None:
+                nsp_logits = outputs['nsp_logits']  # [batch_size, 2]
+                nsp_loss = F.cross_entropy(
+                    nsp_logits.to(torch.float32),
+                    nsp_labels.to(torch.long),
+                    reduction='mean'
+                )
+                total_loss = mlm_loss + nsp_loss
+
+        # Compute metrics
+        with torch.no_grad():
+            # Predictions
+            preds = torch.argmax(mlm_logits, dim=-1)
+            outputs['preds'] = preds
+
+            # Accuracy (only on masked positions)
+            is_correct = mask & (preds == labels)
+            token_accuracy = is_correct.sum() / mask.sum() if mask.sum() > 0 else torch.tensor(0.0)
+
+            # Sequence-level exact accuracy
+            seq_is_correct = is_correct.sum(-1) == loss_counts
+            exact_accuracy = seq_is_correct.sum() / labels.shape[0]
+
+            metrics = {
+                "count": torch.tensor(labels.shape[0], device=labels.device),
+                "accuracy": token_accuracy * labels.shape[0],  # Will be averaged later
+                "exact_accuracy": exact_accuracy * labels.shape[0],
+                "lm_loss": mlm_loss.detach(),
+                "mlm_loss": mlm_loss.detach(),
+                "steps": torch.tensor(1.0, device=labels.device),  # Single pass for BERT
+            }
+
+            if self.use_nsp:
+                metrics['nsp_loss'] = nsp_loss.detach()
+                if 'nsp_labels' in batch and 'nsp_logits' in outputs:
+                    nsp_preds = torch.argmax(outputs['nsp_logits'], dim=-1)
+                    nsp_accuracy = (nsp_preds == batch['nsp_labels']).float().mean()
+                    metrics['nsp_accuracy'] = nsp_accuracy * labels.shape[0]
+
+            # Dummy Q-learning metrics for compatibility
+            metrics['q_halt_loss'] = torch.tensor(0.0, device=labels.device)
+            metrics['q_halt_accuracy'] = metrics['exact_accuracy']
+
+        # Filter outputs for return
+        detached_outputs = {k: outputs[k].detach() for k in return_keys if k in outputs}
+
+        # Always "halted" for BERT (no iterative refinement)
+        all_halted = True
+
+        return new_carry, total_loss, metrics, detached_outputs, all_halted
+
