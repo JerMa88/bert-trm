@@ -1,0 +1,39 @@
+======================================================================
+BERT-TRM Training Pipeline
+======================================================================
+Job ID: 368615
+Running on: bcm-dgxa100-0006
+Start time: Tue Dec  9 02:56:14 AM CST 2025
+======================================================================
+
+Requirement already satisfied: warcio in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (1.7.5)
+Requirement already satisfied: six in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from warcio) (1.17.0)
+======================================================================
+Step 1: Preparing Common Crawl data...
+======================================================================
+Building MLM dataset from Common Crawl...
+Building vocabulary from 1 files...
+Vocabulary size: 5
+Saved vocabulary to data/crawl-mlm/vocab.json
+Processing 1 text files for train split...
+Warning: No examples created for train split
+Processing 1 text files for test split...
+Warning: No examples created for test split
+Saved metadata to data/crawl-mlm/train/dataset.json
+Saved metadata to data/crawl-mlm/test/dataset.json
+
+Dataset creation complete!
+  Train examples: 0
+  Test examples: 0
+  Vocabulary size: 5
+  Max sequence length: 256
+Data preparation completed!
+
+======================================================================
+Step 2: Training BERT model with multi-GPU setup...
+======================================================================
+Number of GPUs: 4
+Global batch size: 256
+Configuration: BERT architecture with 4 layers, 256 hidden size
+======================================================================
+

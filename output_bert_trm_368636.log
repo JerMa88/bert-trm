@@ -1,0 +1,20 @@
+======================================================================
+BERT-TRM Training Pipeline
+======================================================================
+Job ID: 368636
+Running on: bcm-dgxa100-0015
+Start time: Tue Dec  9 07:45:24 AM CST 2025
+======================================================================
+
+Requirement already satisfied: warcio in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (1.7.5)
+Requirement already satisfied: six in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from warcio) (1.17.0)
+Data already exists at data/crawl-mlm, skipping preparation
+
+======================================================================
+Step 2: Training BERT model with multi-GPU setup...
+======================================================================
+Number of GPUs: 4
+Global batch size: 256
+Configuration: BERT architecture with 4 layers, 256 hidden size
+======================================================================
+

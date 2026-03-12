@@ -1,0 +1,43 @@
+Downloading: 0.00B [00:00, ?B/s]Downloading: 0.00B [00:00, ?B/s]
+Traceback (most recent call last):
+  File "/work/projects/jdworak/jerry_ma_AD_ML/idea_density/lms/bert-trm/download_common_crawl.py", line 117, in <module>
+    main()
+  File "/work/projects/jdworak/jerry_ma_AD_ML/idea_density/lms/bert-trm/download_common_crawl.py", line 102, in main
+    download_and_extract_warc(warc_url, output_file, max_documents=10000)
+  File "/work/projects/jdworak/jerry_ma_AD_ML/idea_density/lms/bert-trm/download_common_crawl.py", line 50, in download_and_extract_warc
+    for record in ArchiveIterator(gz):
+                  ^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/archiveiterator.py", line 110, in _iterate_records
+    self.record = self._next_record(self.next_line)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/archiveiterator.py", line 257, in _next_record
+    record = self.loader.parse_record_stream(self.reader,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/recordloader.py", line 86, in parse_record_stream
+    _detect_type_load_headers(stream,
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/recordloader.py", line 224, in _detect_type_load_headers
+    rec_headers = self.warc_parser.parse(stream, statusline)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/statusandheaders.py", line 246, in parse
+    full_statusline = stream.readline()
+                      ^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/bufferedreaders.py", line 185, in readline
+    self._fillbuff()
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/warcio/bufferedreaders.py", line 111, in _fillbuff
+    data = self.stream.read(block_size)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/gzip.py", line 338, in read
+    return self._buffer.read(size)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/_compression.py", line 68, in readinto
+    data = self.read(len(byte_view))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/gzip.py", line 544, in read
+    if not self._read_gzip_header():
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/gzip.py", line 513, in _read_gzip_header
+    last_mtime = _read_gzip_header(self._fp)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/gzip.py", line 473, in _read_gzip_header
+    raise BadGzipFile('Not a gzipped file (%r)' % magic)
+gzip.BadGzipFile: Not a gzipped file (b'<?')

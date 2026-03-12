@@ -1,0 +1,91 @@
+  DEPRECATION: Building 'adam-atan2' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'adam-atan2'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+  error: subprocess-exited-with-error
+  
+  × python setup.py bdist_wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [79 lines of output]
+      /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/__init__.py:92: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
+      !!
+      
+              ********************************************************************************
+              Requirements should be satisfied by a PEP 517 installer.
+              If you are using pip, you can try `pip install --use-pep517`.
+      
+              This deprecation is overdue, please update your project and remove deprecated
+              calls to avoid build errors in the future.
+              ********************************************************************************
+      
+      !!
+        dist.fetch_build_eggs(dist.setup_requires)
+      /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/dist.py:759: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+      
+              ********************************************************************************
+              Please consider removing the following classifiers in favor of a SPDX license expression:
+      
+              License :: OSI Approved :: Apache Software License
+      
+              See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+              ********************************************************************************
+      
+      !!
+        self._finalize_license_expression()
+      running bdist_wheel
+      W1209 07:50:17.401000 93670 site-packages/torch/utils/cpp_extension.py:615] Attempted to use ninja as the BuildExtension backend but we could not find ninja.. Falling back to using the slow distutils backend.
+      running build
+      running build_py
+      creating build/lib.linux-x86_64-cpython-312/adam_atan2
+      copying adam_atan2/adam_atan2_test.py -> build/lib.linux-x86_64-cpython-312/adam_atan2
+      copying adam_atan2/adam_atan2.py -> build/lib.linux-x86_64-cpython-312/adam_atan2
+      copying adam_atan2/__init__.py -> build/lib.linux-x86_64-cpython-312/adam_atan2
+      running build_ext
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 35, in <module>
+        File "/tmp/pip-install-gqs1m2p1/adam-atan2_5dab504c3239402b8ae30ed8cb832ab6/setup.py", line 49, in <module>
+          setuptools.setup(
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/__init__.py", line 115, in setup
+          return distutils.core.setup(**attrs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 186, in setup
+          return run_commands(dist)
+                 ^^^^^^^^^^^^^^^^^^
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 202, in run_commands
+          dist.run_commands()
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/dist.py", line 1002, in run_commands
+          self.run_command(cmd)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/command/bdist_wheel.py", line 370, in run
+          self.run_command("build")
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/command/build.py", line 135, in run
+          self.run_command(cmd_name)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/cmd.py", line 357, in run_command
+          self.distribution.run_command(command)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/command/build_ext.py", line 96, in run
+          _build_ext.run(self)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py", line 368, in run
+          self.build_extensions()
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/torch/utils/cpp_extension.py", line 650, in build_extensions
+          _check_cuda_version(compiler_name, compiler_version)
+        File "/users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages/torch/utils/cpp_extension.py", line 506, in _check_cuda_version
+          raise RuntimeError(CUDA_MISMATCH_MESSAGE, cuda_str_version, torch.version.cuda)
+      RuntimeError: ('The detected CUDA version (%s) mismatches the version that was used to compilePyTorch (%s). Please make sure to use the same CUDA versions.', '11.8', '12.8')
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for adam-atan2
+  DEPRECATION: Building 'antlr4-python3-runtime' using the legacy setup.py bdist_wheel mechanism, which will be removed in a future version. pip 25.3 will enforce this behaviour change. A possible replacement is to use the standardized build interface by setting the `--use-pep517` option, (possibly combined with `--no-build-isolation`), or adding a `pyproject.toml` file to the source tree of 'antlr4-python3-runtime'. Discussion can be found at https://github.com/pypa/pip/issues/6334
+ERROR: Failed to build installable wheels for some pyproject.toml based projects (adam-atan2)

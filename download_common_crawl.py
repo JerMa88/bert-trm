@@ -87,7 +87,7 @@ def main():
     # Use a small WARC file from Common Crawl
     # This is from CC-MAIN-2024-10 crawl (March 2024)
     # We'll use just one segment for a manageable download (~1GB compressed)
-    warc_url = "https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-10/segments/1707947473735.7/warc/CC-MAIN-20240215104848-20240215134848-00000.warc.gz"
+    warc_url = "https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-42/segments/1727944253525.17/warc/CC-MAIN-20241008044807-20241008074807-00461.warc.gz"
 
     output_dir = Path("data/common_crawl")
     output_file = output_dir / "crawl_text.txt"

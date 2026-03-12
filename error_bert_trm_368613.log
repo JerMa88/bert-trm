@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/work/projects/jdworak/jerry_ma_AD_ML/idea_density/lms/bert-trm/download_common_crawl.py", line 11, in <module>
+    from warcio.archiveiterator import ArchiveIterator
+ModuleNotFoundError: No module named 'warcio'

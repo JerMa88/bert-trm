@@ -1,0 +1,4 @@
+Counting words in crawl_text.txt: 0it [00:00, ?it/s]Counting words in crawl_text.txt: 0it [00:00, ?it/s]
+Processing crawl_text.txt: 0it [00:00, ?it/s]Processing crawl_text.txt: 0it [00:00, ?it/s]
+Processing crawl_text.txt: 0it [00:00, ?it/s]Processing crawl_text.txt: 0it [00:00, ?it/s]
+slurmstepd: error: *** JOB 368615 ON bcm-dgxa100-0006 CANCELLED AT 2025-12-09T02:56:33 ***

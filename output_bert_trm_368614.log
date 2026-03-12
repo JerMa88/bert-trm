@@ -1,0 +1,25 @@
+======================================================================
+BERT-TRM Training Pipeline
+======================================================================
+Job ID: 368614
+Running on: bcm-dgxa100-0006
+Start time: Tue Dec  9 02:55:11 AM CST 2025
+======================================================================
+
+Collecting warcio
+  Downloading warcio-1.7.5-py2.py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: six in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from warcio) (1.17.0)
+Downloading warcio-1.7.5-py2.py3-none-any.whl (40 kB)
+Installing collected packages: warcio
+Successfully installed warcio-1.7.5
+======================================================================
+Step 1: Preparing Common Crawl data...
+======================================================================
+Downloading Common Crawl text data...
+======================================================================
+Common Crawl Data Download
+======================================================================
+Output: data/common_crawl/crawl_text.txt
+Max documents: 10000
+
+Downloading Common Crawl data from: https://data.commoncrawl.org/crawl-data/CC-MAIN-2024-10/segments/1707947473735.7/warc/CC-MAIN-20240215104848-20240215134848-00000.warc.gz

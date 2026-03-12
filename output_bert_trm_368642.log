@@ -1,0 +1,1937 @@
+======================================================================
+BERT-TRM Training Pipeline
+======================================================================
+Job ID: 368642
+Running on: bcm-dgxa100-0002
+Start time: Tue Dec  9 07:53:45 AM CST 2025
+======================================================================
+
+Requirement already satisfied: torch in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (2.8.0)
+Requirement already satisfied: einops in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.8.1)
+Requirement already satisfied: tqdm in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (4.67.1)
+Requirement already satisfied: coolname in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 5)) (2.2.0)
+Requirement already satisfied: pydantic in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (2.11.7)
+Requirement already satisfied: argdantic in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 7)) (1.3.3)
+Requirement already satisfied: wandb in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (0.21.4)
+Requirement already satisfied: omegaconf in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 9)) (2.3.0)
+Requirement already satisfied: hydra-core in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 10)) (1.3.2)
+Requirement already satisfied: huggingface_hub in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 11)) (0.34.4)
+Requirement already satisfied: packaging in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (25.0)
+Requirement already satisfied: ninja in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 13)) (1.13.0)
+Requirement already satisfied: wheel in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 14)) (0.45.1)
+Requirement already satisfied: setuptools in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 15)) (80.9.0)
+Requirement already satisfied: setuptools-scm in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 16)) (9.2.2)
+Requirement already satisfied: pydantic-core in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 17)) (2.33.2)
+Requirement already satisfied: numba in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 19)) (0.63.0)
+Requirement already satisfied: triton in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 20)) (3.4.0)
+Requirement already satisfied: warcio in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 21)) (1.7.5)
+Requirement already satisfied: filelock in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.19.1)
+Requirement already satisfied: typing-extensions>=4.10.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (4.15.0)
+Requirement already satisfied: sympy>=1.13.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.5)
+Requirement already satisfied: jinja2 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (2025.7.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.93)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (9.10.2.21)
+Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.4.1)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.3.83 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (11.3.3.83)
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (10.3.9.90)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (11.7.3.90)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.5.8.93)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (0.7.1)
+Requirement already satisfied: nvidia-nccl-cu12==2.27.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (2.27.3)
+Requirement already satisfied: nvidia-nvtx-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.93)
+Requirement already satisfied: nvidia-cufile-cu12==1.13.1.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (1.13.1.3)
+Requirement already satisfied: annotated-types>=0.6.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from pydantic->-r requirements.txt (line 6)) (0.7.0)
+Requirement already satisfied: typing-inspection>=0.4.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from pydantic->-r requirements.txt (line 6)) (0.4.1)
+Requirement already satisfied: pydantic-settings<3,>=2.4.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from argdantic->-r requirements.txt (line 7)) (2.12.0)
+Requirement already satisfied: python-dotenv>=0.21.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from pydantic-settings<3,>=2.4.0->argdantic->-r requirements.txt (line 7)) (1.2.1)
+Requirement already satisfied: click>=8.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (8.2.1)
+Requirement already satisfied: gitpython!=3.1.29,>=1.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (3.1.45)
+Requirement already satisfied: platformdirs in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (4.4.0)
+Requirement already satisfied: protobuf!=4.21.0,!=5.28.0,<7,>=3.19.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (6.32.1)
+Requirement already satisfied: pyyaml in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (6.0.2)
+Requirement already satisfied: requests<3,>=2.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (2.32.5)
+Requirement already satisfied: sentry-sdk>=2.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (2.37.1)
+Requirement already satisfied: charset_normalizer<4,>=2 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (3.4.3)
+Requirement already satisfied: idna<4,>=2.5 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (2025.8.3)
+Requirement already satisfied: antlr4-python3-runtime==4.9.* in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from omegaconf->-r requirements.txt (line 9)) (4.9.3)
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from huggingface_hub->-r requirements.txt (line 11)) (1.1.9)
+Requirement already satisfied: llvmlite<0.47,>=0.46.0dev0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from numba->-r requirements.txt (line 19)) (0.46.0)
+Requirement already satisfied: numpy<2.4,>=1.22 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from numba->-r requirements.txt (line 19)) (1.26.4)
+Requirement already satisfied: six in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from warcio->-r requirements.txt (line 21)) (1.17.0)
+Requirement already satisfied: gitdb<5,>=4.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 8)) (4.0.12)
+Requirement already satisfied: smmap<6,>=3.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 8)) (5.0.2)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from sympy>=1.13.3->torch->-r requirements.txt (line 1)) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from jinja2->torch->-r requirements.txt (line 1)) (3.0.2)
+Data already exists at data/crawl-mlm, skipping preparation
+
+======================================================================
+Step 2: Training BERT model with multi-GPU setup...
+======================================================================
+Number of GPUs: 4
+Global batch size: 256
+Configuration: BERT architecture with 4 layers, 256 hidden size
+======================================================================
+
+Diagnostics...
+Torch: 2.8.0+cu128
+Coolname: steady-skink
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+
+
+[Gloo] Rank [Gloo] Rank [Gloo] Rank 0[Gloo] Rank 21 is connected to 3 is connected to  is connected to 3 is connected to 33 peer ranks. 3 peer ranks.  peer ranks. Expected number of connected peer ranks is :  peer ranks. Expected number of connected peer ranks is : Expected number of connected peer ranks is : 3Expected number of connected peer ranks is : 33
+3
+
+
+No evaluator foundNo evaluator found
+No evaluator found
+No evaluator found
+
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+[Rank 3, World Size 4]: Epoch 0
+[Rank 1, World Size 4]: Epoch 0
+[Rank 2, World Size 4]: Epoch 0
+[Rank 0, World Size 4]: Epoch 0
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+[Rank 3, World Size 4]: Epoch 5000
+
+Running 0 evaluator(s)...[Rank 2, World Size 4]: Epoch 5000
+[Rank 1, World Size 4]: Epoch 5000All evaluators completed!
+
+
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 5000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 10000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 10000
+  Completed inference in 1 steps
+Processing batch 39: test
+[Rank 1, World Size 4]: Epoch 10000
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 10000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 15000
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 2, World Size 4]: Epoch 15000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 15000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 15000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 20000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 20000
+[Rank 1, World Size 4]: Epoch 20000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 20000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 25000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 25000
+[Rank 1, World Size 4]: Epoch 25000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 25000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 30000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 30000
+[Rank 1, World Size 4]: Epoch 30000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 30000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 35000
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 1, World Size 4]: Epoch 35000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 35000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 35000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 40000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 40000
+[Rank 1, World Size 4]: Epoch 40000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 40000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 45000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 45000
+[Rank 2, World Size 4]: Epoch 45000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 45000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 50000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 50000
+[Rank 2, World Size 4]: Epoch 50000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 50000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 55000
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 1, World Size 4]: Epoch 55000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 55000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 55000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 60000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 60000
+[Rank 2, World Size 4]: Epoch 60000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 60000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 65000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 65000
+[Rank 2, World Size 4]: Epoch 65000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 65000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 70000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 70000
+[Rank 2, World Size 4]: Epoch 70000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 70000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 75000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 75000
+[Rank 2, World Size 4]: Epoch 75000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 75000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 80000
+  Completed inference in 1 steps
+[Rank 2, World Size 4]: Epoch 80000Processing batch 38: test
+
+[Rank 1, World Size 4]: Epoch 80000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 80000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+[Rank 3, World Size 4]: Epoch 85000
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 85000
+[Rank 2, World Size 4]: Epoch 85000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 85000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps[Rank 3, World Size 4]: Epoch 90000
+
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 1, World Size 4]: Epoch 90000[Rank 2, World Size 4]: Epoch 90000
+
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 90000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+[Rank 3, World Size 4]: Epoch 95000
+  Completed inference in 1 steps
+Processing batch 38: test
+[Rank 2, World Size 4]: Epoch 95000
+[Rank 1, World Size 4]: Epoch 95000
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+[Rank 0, World Size 4]: Epoch 95000
+TRAIN
+EVALUATE
+Processing batch 1: test
+  Completed inference in 1 steps
+Processing batch 2: test
+  Completed inference in 1 steps
+Processing batch 3: test
+  Completed inference in 1 steps
+Processing batch 4: test
+  Completed inference in 1 steps
+Processing batch 5: test
+  Completed inference in 1 steps
+Processing batch 6: test
+  Completed inference in 1 steps
+Processing batch 7: test
+  Completed inference in 1 steps
+Processing batch 8: test
+  Completed inference in 1 steps
+Processing batch 9: test
+  Completed inference in 1 steps
+Processing batch 10: test
+  Completed inference in 1 steps
+Processing batch 11: test
+  Completed inference in 1 steps
+Processing batch 12: test
+  Completed inference in 1 steps
+Processing batch 13: test
+  Completed inference in 1 steps
+Processing batch 14: test
+  Completed inference in 1 steps
+Processing batch 15: test
+  Completed inference in 1 steps
+Processing batch 16: test
+  Completed inference in 1 steps
+Processing batch 17: test
+  Completed inference in 1 steps
+Processing batch 18: test
+  Completed inference in 1 steps
+Processing batch 19: test
+  Completed inference in 1 steps
+Processing batch 20: test
+  Completed inference in 1 steps
+Processing batch 21: test
+  Completed inference in 1 steps
+Processing batch 22: test
+  Completed inference in 1 steps
+Processing batch 23: test
+  Completed inference in 1 steps
+Processing batch 24: test
+  Completed inference in 1 steps
+Processing batch 25: test
+  Completed inference in 1 steps
+Processing batch 26: test
+  Completed inference in 1 steps
+Processing batch 27: test
+  Completed inference in 1 steps
+Processing batch 28: test
+  Completed inference in 1 steps
+Processing batch 29: test
+  Completed inference in 1 steps
+Processing batch 30: test
+  Completed inference in 1 steps
+Processing batch 31: test
+  Completed inference in 1 steps
+Processing batch 32: test
+  Completed inference in 1 steps
+Processing batch 33: test
+  Completed inference in 1 steps
+Processing batch 34: test
+  Completed inference in 1 steps
+Processing batch 35: test
+  Completed inference in 1 steps
+Processing batch 36: test
+  Completed inference in 1 steps
+Processing batch 37: test
+  Completed inference in 1 steps
+Processing batch 38: test
+  Completed inference in 1 steps
+Processing batch 39: test
+  Completed inference in 1 steps
+
+Running 0 evaluator(s)...
+All evaluators completed!
+SAVE CHECKPOINT
+
+======================================================================
+Training completed!
+End time: Tue Dec  9 07:54:14 AM CST 2025
+======================================================================
+
+Checkpoints saved in: outputs/bert/
+Logs saved in: output_bert_trm_368642.log
+

@@ -1,0 +1,189 @@
+======================================================================
+BERT-TRM Training Pipeline
+======================================================================
+Job ID: 368640
+Running on: bcm-dgxa100-0002
+Start time: Tue Dec  9 07:51:04 AM CST 2025
+======================================================================
+
+Requirement already satisfied: torch in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (2.8.0)
+Requirement already satisfied: einops in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.8.1)
+Requirement already satisfied: tqdm in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (4.67.1)
+Collecting coolname (from -r requirements.txt (line 5))
+  Using cached coolname-2.2.0-py2.py3-none-any.whl.metadata (6.2 kB)
+Requirement already satisfied: pydantic in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 6)) (2.11.7)
+Collecting argdantic (from -r requirements.txt (line 7))
+  Using cached argdantic-1.3.3-py2.py3-none-any.whl.metadata (7.2 kB)
+Requirement already satisfied: wandb in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 8)) (0.21.4)
+Collecting omegaconf (from -r requirements.txt (line 9))
+  Using cached omegaconf-2.3.0-py3-none-any.whl.metadata (3.9 kB)
+Collecting hydra-core (from -r requirements.txt (line 10))
+  Using cached hydra_core-1.3.2-py3-none-any.whl.metadata (5.5 kB)
+Requirement already satisfied: huggingface_hub in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 11)) (0.34.4)
+Requirement already satisfied: packaging in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (25.0)
+Collecting ninja (from -r requirements.txt (line 13))
+  Using cached ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.1 kB)
+Requirement already satisfied: wheel in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 14)) (0.45.1)
+Requirement already satisfied: setuptools in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 15)) (80.9.0)
+Collecting setuptools-scm (from -r requirements.txt (line 16))
+  Using cached setuptools_scm-9.2.2-py3-none-any.whl.metadata (7.7 kB)
+Requirement already satisfied: pydantic-core in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 17)) (2.33.2)
+Collecting numba (from -r requirements.txt (line 19))
+  Using cached numba-0.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.9 kB)
+Requirement already satisfied: triton in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 20)) (3.4.0)
+Requirement already satisfied: warcio in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from -r requirements.txt (line 21)) (1.7.5)
+Requirement already satisfied: filelock in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.19.1)
+Requirement already satisfied: typing-extensions>=4.10.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (4.15.0)
+Requirement already satisfied: sympy>=1.13.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (1.14.0)
+Requirement already satisfied: networkx in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.5)
+Requirement already satisfied: jinja2 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: fsspec in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (2025.7.0)
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.93)
+Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-cudnn-cu12==9.10.2.21 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (9.10.2.21)
+Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.4.1)
+Requirement already satisfied: nvidia-cufft-cu12==11.3.3.83 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (11.3.3.83)
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (10.3.9.90)
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (11.7.3.90)
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.5.8.93)
+Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (0.7.1)
+Requirement already satisfied: nvidia-nccl-cu12==2.27.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (2.27.3)
+Requirement already satisfied: nvidia-nvtx-cu12==12.8.90 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.90)
+Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.93 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (12.8.93)
+Requirement already satisfied: nvidia-cufile-cu12==1.13.1.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from torch->-r requirements.txt (line 1)) (1.13.1.3)
+Requirement already satisfied: annotated-types>=0.6.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from pydantic->-r requirements.txt (line 6)) (0.7.0)
+Requirement already satisfied: typing-inspection>=0.4.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from pydantic->-r requirements.txt (line 6)) (0.4.1)
+Collecting pydantic-settings<3,>=2.4.0 (from argdantic->-r requirements.txt (line 7))
+  Using cached pydantic_settings-2.12.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.4.0->argdantic->-r requirements.txt (line 7))
+  Using cached python_dotenv-1.2.1-py3-none-any.whl.metadata (25 kB)
+Requirement already satisfied: click>=8.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (8.2.1)
+Requirement already satisfied: gitpython!=3.1.29,>=1.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (3.1.45)
+Requirement already satisfied: platformdirs in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (4.4.0)
+Requirement already satisfied: protobuf!=4.21.0,!=5.28.0,<7,>=3.19.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (6.32.1)
+Requirement already satisfied: pyyaml in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (6.0.2)
+Requirement already satisfied: requests<3,>=2.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (2.32.5)
+Requirement already satisfied: sentry-sdk>=2.0.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from wandb->-r requirements.txt (line 8)) (2.37.1)
+Requirement already satisfied: charset_normalizer<4,>=2 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (3.4.3)
+Requirement already satisfied: idna<4,>=2.5 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from requests<3,>=2.0.0->wandb->-r requirements.txt (line 8)) (2025.8.3)
+Collecting antlr4-python3-runtime==4.9.* (from omegaconf->-r requirements.txt (line 9))
+  Using cached antlr4_python3_runtime-4.9.3-py3-none-any.whl
+Requirement already satisfied: hf-xet<2.0.0,>=1.1.3 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from huggingface_hub->-r requirements.txt (line 11)) (1.1.9)
+Collecting llvmlite<0.47,>=0.46.0dev0 (from numba->-r requirements.txt (line 19))
+  Using cached llvmlite-0.46.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.0 kB)
+Requirement already satisfied: numpy<2.4,>=1.22 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from numba->-r requirements.txt (line 19)) (1.26.4)
+Requirement already satisfied: six in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from warcio->-r requirements.txt (line 21)) (1.17.0)
+Requirement already satisfied: gitdb<5,>=4.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 8)) (4.0.12)
+Requirement already satisfied: smmap<6,>=3.0.1 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.29,>=1.0.0->wandb->-r requirements.txt (line 8)) (5.0.2)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from sympy>=1.13.3->torch->-r requirements.txt (line 1)) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in /users/jerryma/.conda/envs/torch2.8/lib/python3.12/site-packages (from jinja2->torch->-r requirements.txt (line 1)) (3.0.2)
+Using cached coolname-2.2.0-py2.py3-none-any.whl (37 kB)
+Using cached argdantic-1.3.3-py2.py3-none-any.whl (26 kB)
+Using cached pydantic_settings-2.12.0-py3-none-any.whl (51 kB)
+Using cached omegaconf-2.3.0-py3-none-any.whl (79 kB)
+Using cached hydra_core-1.3.2-py3-none-any.whl (154 kB)
+Using cached ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (180 kB)
+Using cached setuptools_scm-9.2.2-py3-none-any.whl (62 kB)
+Using cached numba-0.63.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.8 MB)
+Using cached llvmlite-0.46.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (56.3 MB)
+Using cached python_dotenv-1.2.1-py3-none-any.whl (21 kB)
+Installing collected packages: coolname, antlr4-python3-runtime, setuptools-scm, python-dotenv, omegaconf, ninja, llvmlite, numba, hydra-core, pydantic-settings, argdantic
+
+Successfully installed antlr4-python3-runtime-4.9.3 argdantic-1.3.3 coolname-2.2.0 hydra-core-1.3.2 llvmlite-0.46.0 ninja-1.13.0 numba-0.63.0 omegaconf-2.3.0 pydantic-settings-2.12.0 python-dotenv-1.2.1 setuptools-scm-9.2.2
+Data already exists at data/crawl-mlm, skipping preparation
+
+======================================================================
+Step 2: Training BERT model with multi-GPU setup...
+======================================================================
+Number of GPUs: 4
+Global batch size: 256
+Configuration: BERT architecture with 4 layers, 256 hidden size
+======================================================================
+
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+adam_atan2 not available (requires CUDA). Using standard Adam optimizer.
+
+[Gloo] Rank [Gloo] Rank [Gloo] Rank [Gloo] Rank 0321 is connected to  is connected to  is connected to  is connected to 3333 peer ranks.  peer ranks.  peer ranks.  peer ranks. Expected number of connected peer ranks is : Expected number of connected peer ranks is : Expected number of connected peer ranks is : Expected number of connected peer ranks is : 3333
+
+
+
+No evaluator foundNo evaluator foundNo evaluator foundNo evaluator found
+
+
+
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+BERTModel(
+  (token_embeddings): CastedEmbedding()
+  (position_embeddings): CastedEmbedding()
+  (token_type_embeddings): CastedEmbedding()
+  (layers): ModuleList(
+    (0-3): 4 x BERTBlock(
+      (self_attn): Attention(
+        (qkv_proj): CastedLinear()
+        (o_proj): CastedLinear()
+      )
+      (mlp): SwiGLU(
+        (gate_up_proj): CastedLinear()
+        (down_proj): CastedLinear()
+      )
+    )
+  )
+  (mlm_head): CastedLinear()
+)
+
